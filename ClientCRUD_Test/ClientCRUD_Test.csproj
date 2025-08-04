@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\teste_btg_pactual-main\ClientCRUD.csproj" />
+		<ProjectReference Include="..\teste_btg-main\ClientCRUD.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
