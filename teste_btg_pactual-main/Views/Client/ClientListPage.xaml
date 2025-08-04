@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ClientCRUD.Views.Client.ClientListPage"
+             xmlns:viewModel="clr-namespace:ClientCRUD.ViewModels.Client"
+             xmlns:model="clr-namespace:ClientCRUD.Models.Entities"
+             xmlns:components="clr-namespace:ClientCRUD.Views.Components"
+             Title="Clientes"
+             x:DataType="viewModel:ClientViewModel"
+             
+             >
+    <VerticalStackLayout Padding="20" 
+                         Spacing="10">
+        <ImageButton x:Name="Logout" Source="logout.png" 
+                     Clicked="Logout_Clicked"
+                     WidthRequest="12"
+                     HorizontalOptions="End"/>
+        <components:AceptButton Text="Novo" 
+                                 Command="{Binding NewClientCommand}"
+                                 HorizontalOptions="Fill"/>
+
+        <CollectionView x:Name="ClientsCollectionView"
+                        ItemsSource="{Binding Clients}" 
+                        SelectionMode="Single">
+            <CollectionView.Header>
+                <Grid Padding="10"
+                      ColumnSpacing="20"
+                      ColumnDefinitions="*,*,*,Auto,Auto"
+                      Background="#f0f0f0">
+
+                    <components:CustomLabelHeaderColumn Text="Nome"/>
+
+                    <components:CustomLabelHeaderColumn Text="Idade"
+                                                        Grid.Column="1"/>
+
+                    <components:CustomLabelHeaderColumn Text="Endereço"
+                                                        Grid.Column="2"/>
+
+                    <components:CustomLabelHeaderColumn Text="Editar"
+                                                        Grid.Column="3"/>
+
+                    <components:CustomLabelHeaderColumn Text="Excluir"
+                                                        Grid.Column="4"/>
+
+
+                </Grid>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate 
+                    x:DataType="model:ClientModel">
+                    <Grid Padding="10"
+                          ColumnDefinitions="*,*,*,Auto,Auto"
+                          RowDefinitions="Auto">
+
+                        <Label Text="{Binding DefaultProperty}" 
+                               FontSize="16"
+                               VerticalOptions="Center" />
+
+                        <Label Text="{Binding Age}"
+                               FontSize="16"
+                               Grid.Column="1"/>
+
+                        <Label Text="{Binding Address}"
+                               FontSize="16"
+                               Grid.Column="2"/>
+
+                        <components:AceptButton Text="Editar" 
+                                                TextColor="White"
+                                                Command="{Binding BindingContext.EditCommand, Source={x:Reference ClientsCollectionView}}" 
+                                                CommandParameter="{Binding .}"
+                                                Grid.Column="3"/>
+
+                        <components:CancelButton Text="Excluir" 
+                                                 TextColor="White"
+                                                 Command="{Binding BindingContext.DeleteCommand, Source={x:Reference ClientsCollectionView}}" 
+                                                 CommandParameter="{Binding .}"
+                                                 Grid.Column="4"/>
+                        
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

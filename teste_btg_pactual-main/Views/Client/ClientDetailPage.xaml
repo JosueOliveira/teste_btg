@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ClientCRUD.Views.Client.ClientDetailPage"
+             xmlns:viewModel="clr-namespace:ClientCRUD.ViewModels.Client"
+             xmlns:components="clr-namespace:ClientCRUD.Views.Components"
+             x:DataType="viewModel:ClientViewModel" 
+             Title="ClientDetailPage">
+
+    <VerticalStackLayout 
+        Padding="20"
+        Spacing="15">
+        
+        <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Padding="20" BackgroundColor="Pink"/>
+
+        <Label Text="Nome"/>        
+        <Entry x:Name="NameEntry"
+               Text="{Binding Client.Name}"
+               Placeholder="Digite seu nome"
+               TextChanged="OnEntryTextChanged"/>
+        
+        <Label Text="Sobrenome"/>
+        <Entry x:Name="LastNameEntry"
+               Text="{Binding Client.LastName}"
+               Placeholder="Digite seu sobrenome"
+               TextChanged="OnEntryTextChanged"/>
+
+        <Label Text="Idade"/>
+        <Entry x:Name="AgeEntry" 
+               Text="{Binding Client.Age}"
+               Placeholder="Digite sua idade" 
+               Keyboard="Numeric"
+               TextChanged="OnAgeTextChanged"/>
+        
+        <Label Text="Endereço"/>
+        <Entry x:Name="AddressEntry"
+               Text="{Binding Client.Address}"
+               Placeholder="Digite seu endereço"
+               TextChanged="OnEntryTextChanged"/>
+
+        <HorizontalStackLayout>
+            <components:CancelButton Text="Cancelar"
+                                     Command="{Binding CancelCommand}"/>
+
+            <components:AceptButton x:Name="SaveButton"
+                                    Text="Salvar"
+                                    Command="{Binding AddCommand}"
+                                    IsEnabled="False"/>
+        </HorizontalStackLayout> 
+        
+    </VerticalStackLayout>
+</ContentPage>
