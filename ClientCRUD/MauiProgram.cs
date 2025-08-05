@@ -1,4 +1,5 @@
-﻿using ClientCRUD.Models.DAO;
+﻿using ClientCRUD.Factory;
+using ClientCRUD.Models.DAO;
 using ClientCRUD.Models.Entities;
 using ClientCRUD.Models.Interfaces;
 using ClientCRUD.Repository;
@@ -30,6 +31,9 @@ namespace ClientCRUD
             builder.Services.AddTransient<IClientService, ClientService>();
             builder.Services.AddTransient<IClientRepository, ClientRepository>();
             builder.Services.AddTransient<IClientValidation, ClientValidation>();
+            builder.Services.AddTransient<INavigationService, NavigationService>();
+            builder.Services.AddTransient<IAlertService, AlertService>();
+            builder.Services.AddTransient<IClientFactory, ClientFactory>();
             
 # if WINDOWS
             Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping("FullscreenWindow", (handler, view) =>

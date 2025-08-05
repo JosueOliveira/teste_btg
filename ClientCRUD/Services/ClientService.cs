@@ -1,5 +1,7 @@
 ﻿using ClientCRUD.Models.Entities;
+using ClientCRUD.Models.Exceptions;
 using ClientCRUD.Models.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClientCRUD.Services
 {
@@ -16,7 +18,11 @@ namespace ClientCRUD.Services
 
         public void SaveClient(ClientModel client)
         {
-            this._clientValidation.Validate(client);
+            var errors = this._clientValidation.Validate(client);
+            if (errors.Any())
+            {
+                throw new NotificationsExceptions(errors);
+            }
 
             var exists = _clientRepository.Exists(client.Id);
 

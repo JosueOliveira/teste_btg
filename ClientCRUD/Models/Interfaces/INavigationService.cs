@@ -1,5 +1,4 @@
 ﻿using ClientCRUD.Models.Entities;
-using ClientCRUD.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ClientCRUD.Models.Interfaces;
-public interface IClientValidation
+public interface INavigationService
 {
-    IReadOnlyList<string> Validate(ClientModel client);
+    Task OpenClientDetail(Window window);
+    void CloseModal();
 }
