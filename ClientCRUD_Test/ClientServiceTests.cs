@@ -1,4 +1,5 @@
 ﻿using ClientCRUD.Models.Entities;
+using ClientCRUD.Models.Exceptions;
 using ClientCRUD.Models.Interfaces;
 using ClientCRUD.Services;
 using ClientCRUD.Validations;
@@ -35,18 +36,25 @@ public class ClientServiceTests
     }
 
     [Theory]
-    [InlineData(null, "Santos", "Rua A", 30, "Nome obrigatório.")]
-    [InlineData("Gerson", null, "Rua A", 30, "Sobrenome obrigatório.")]
-    [InlineData("Gerson", "Santos", null, 30, "Endereço obrigatório.")]
-    [InlineData("Gerson", "Santos", "Rua A", -1, "Idade inválida.")]
-    [InlineData("Gerson", "Santos", "Rua A", 150, "Idade inválida.")]
+    [InlineData(null, "Santos", "Rua A", 30, "Nome é obrigatório.")]
+    [InlineData("Gerson", null, "Rua A", 30, "Sobrenome é obrigatório.")]
+    [InlineData("Gerson", "Santos", null, 30, "Endereço é obrigatório.")]
+    [InlineData("Gerson", "Santos", "Rua A", -1, "Idade deve ser maior que zero.")]
+    [InlineData("Gerson", "Santos", "Rua A", 150, "Idade não pode ser maior que 100.")]
     public void SaveClientInvalidTest(string name, string lastName, string address, int age, string validateMessage)
     {
         var client = new ClientModel { Name = name, LastName = lastName, Address = address, Age = age };
 
-        var ex = Assert.Throws<Exception>(() =>  clientService.SaveClient(client));
+        var ex = Assert.Throws<NotificationsExceptions>(() =>  clientService.SaveClient(client));
 
         Assert.Equal(validateMessage, ex.Message);
+    }
+
+    [Fact]
+    public void SaveClientNullTest()
+    {
+        var ex = Assert.Throws<NotificationsExceptions>(() => clientService.SaveClient(null));
+        Assert.Contains("Cliente não definido.", ex.Errors);
     }
 
     [Fact]

@@ -12,6 +12,9 @@ public partial class ClientViewModel : ObservableObject
     #region Properties
     private Window _window;
     private readonly IClientService _clientService;
+    private readonly INavigationService _navigationService;
+    private readonly IAlertService _alertService;
+    private readonly IClientFactory _clientFactory;
     [ObservableProperty]
     private ObservableCollection<ClientModel> clients;
     [ObservableProperty]
@@ -23,9 +26,16 @@ public partial class ClientViewModel : ObservableObject
     #endregion
 
     #region Builders
-    public ClientViewModel(IClientService clientService)
+    public ClientViewModel(
+        IClientService clientService, 
+        INavigationService navigationService,
+        IAlertService alertService,
+        IClientFactory clientFactory)
     {
         _clientService = clientService;
+        _navigationService = navigationService;       
+        _alertService = alertService;
+        _clientFactory = clientFactory;
         Initiliazer();
     }
     #endregion
@@ -41,38 +51,38 @@ public partial class ClientViewModel : ObservableObject
     [RelayCommand]
     public async Task Add()
     {
-        AddClient();
+        await AddClient();
     }
 
     [RelayCommand]
     public async Task Cancel()
     {
-        CloseModal();
+        await CloseModal();
     }
 
     [RelayCommand]
     private async Task Delete(ClientModel client)
     {
-        if (!await DisplayAlert.ConfirmAlert($"Deseja apagar o cliente {client.DefaultProperty}?"))
+        if (!await _alertService.ConfirmAsync($"Deseja apagar o cliente {client.DefaultProperty}?"))
             return;
 
-        DeleteClient(client);
+        await DeleteClient(client);
     }
 
     [RelayCommand]
     private async Task Edit(ClientModel client)
     {
-        EditClient(client);
+        await EditClient(client);
     }
     #endregion
 
     #region CRUD
-    private async void AddClient()
+    private async Task AddClient()
     {
         try
         {
             _clientService.SaveClient(this.Client);
-            AfterSave();
+            await AfterSave();
         }
         catch (Exception e)
         {
@@ -81,19 +91,19 @@ public partial class ClientViewModel : ObservableObject
         }
     }
 
-    private async void EditClient(ClientModel client)
+    private async Task EditClient(ClientModel client)
     {
         try
         {
-            OpenClientDetailPage(CloneClient(client));
+            await OpenClientDetailPage(_clientFactory.Clone(client));
         }
         catch (Exception e)
         {
-            DisplayAlert.ShowAlert($"Não foi possível editar este cliente!!{Environment.NewLine}{e.Message}");
+            _alertService.Show($"Não foi possível editar este cliente!!{Environment.NewLine}{e.Message}");            
         }
     }
 
-    private async void DeleteClient(ClientModel client)
+    private async Task DeleteClient(ClientModel client)
     {
         try
         {
@@ -102,7 +112,7 @@ public partial class ClientViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            DisplayAlert.ShowAlert($"Não foi possível excluir este cliente!!{Environment.NewLine}{e.Message}");
+            _alertService.Show($"Não foi possível excluir este cliente!!{Environment.NewLine}{e.Message}");            
         }
     }
     #endregion
@@ -113,14 +123,14 @@ public partial class ClientViewModel : ObservableObject
         InitClient();
         LoadClients();
     }
-    private void AfterSave()
+    private async Task AfterSave()
     {
         LoadClients();
-        CloseModal();
+        await CloseModal();
     }
     public void InitClient()
     {
-        Client = new ClientModel(); 
+        Client = _clientFactory.CreateNew(); 
         HasError = false;
         ErrorMessage = string.Empty;
     }
@@ -128,34 +138,22 @@ public partial class ClientViewModel : ObservableObject
     { 
         Clients = new ObservableCollection<ClientModel>(_clientService.GetAllClients());
     }
-    private async void OpenClientDetailPage(ClientModel editClient = null)
+    private async Task OpenClientDetailPage(ClientModel editClient = null)
     {
         if (editClient != null)
             this.Client = editClient;
         else
             this.Client.Id = _clientService.NextIdClient();
 
-
         var clientDetail = new ClientDetailPage(this);
         _window = new Window(clientDetail);
-        Application.Current?.OpenWindow(_window);
+        await _navigationService.OpenClientDetail(_window);        
     }
-    private async void CloseModal()
+    private async Task CloseModal()
     {
-        InitClient(); 
-        Application.Current?.CloseWindow(_window);
-    }
-    private ClientModel CloneClient(ClientModel client)
-    {
-        return new ClientModel
-        {
-            Id = client.Id,
-            Name = client.Name,
-            LastName = client.LastName,
-            Age = client.Age,
-            Address = client.Address
-        };
-    }
+        InitClient();
+        _navigationService.CloseModal(); 
+    } 
      
     #endregion 
 }
