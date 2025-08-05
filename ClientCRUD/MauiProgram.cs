@@ -3,6 +3,7 @@ using ClientCRUD.Models.Entities;
 using ClientCRUD.Models.Interfaces;
 using ClientCRUD.Repository;
 using ClientCRUD.Services;
+using ClientCRUD.Validations;
 using ClientCRUD.ViewModels.Client;
 using ClientCRUD.Views.Client;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,7 @@ namespace ClientCRUD
             builder.Services.AddSingleton<ClientListPage>();
             builder.Services.AddTransient<IClientService, ClientService>();
             builder.Services.AddTransient<IClientRepository, ClientRepository>();
+            builder.Services.AddTransient<IClientValidation, ClientValidation>();
             
 # if WINDOWS
             Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping("FullscreenWindow", (handler, view) =>
