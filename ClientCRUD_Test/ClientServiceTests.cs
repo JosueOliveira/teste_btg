@@ -1,6 +1,7 @@
 ﻿using ClientCRUD.Models.Entities;
 using ClientCRUD.Models.Interfaces;
 using ClientCRUD.Services;
+using ClientCRUD.Validations;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ public class ClientServiceTests
 {
     private readonly Mock<IClientRepository> clientRepository;
     private readonly ClientService clientService;
+    private readonly IClientValidation clientValidation;
 
     public ClientServiceTests()
     {
         clientRepository = new Mock<IClientRepository>();
-        clientService = new ClientService(clientRepository.Object);
+        clientValidation = new ClientValidation();
+        clientService = new ClientService(clientRepository.Object, clientValidation);
     }
 
     [Fact]
